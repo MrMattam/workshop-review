@@ -1,35 +1,47 @@
 //const prompt=require("prompt-sync")({sigint:true});
+let tailleDuPlateau = 3;
 
-function afficherPlateau(jeu) {
+function afficherPlateau(plateauDeJeu) {
     console.log("Plateau de jeu :");
-    for (let i = 0; i < 3; i++) {
-        console.log(jeu[i].join(" | "));
+
+    for (let i = 0; i < tailleDuPlateau; i++) {
+        console.log(plateauDeJeu[i].join(" | "));
         if (i < 2) {
             console.log("---------");
         }
     }
 }
 
-// Fonction pour vérifier s'il y a un perdant
 function verifierGagnant(plateau, symbole) {
-    // Vérification des lignes, colonnes et diagonales
-    for (let i = 0; i < 3; i++) {
+
+    for (let i = 0; i < tailleDuPlateau; i++) {
         if (
-            (plateau[i][0] === symbole && plateau[i][1] === symbole && plateau[i][2] === symbole) ||
-            (plateau[0][i] === symbole && plateau[1][i] === symbole && plateau[2][i] === symbole)
+            verifierLigne(i) ||  verifierColonne(i)
         ) {
             return true;
         }
     }
 
-    if (
-        (plateau[0][0] === symbole && plateau[1][1] === symbole && plateau[2][2] === symbole) ||
-        (plateau[0][2] === symbole && plateau[1][1] === symbole && plateau[2][0] === symbole)
-    ) {
-        return true;
+    return (verifierDiagonaleGaucheDroite() || verifierDiagonalDroiteGauche());
+
+
+
+    // Fonctions Utilitaires
+    function verifierLigne(i) {
+        return plateau[i][0] === symbole && plateau[i][1] === symbole && plateau[i][2] === symbole;
     }
 
-    return false;
+    function verifierColonne(i) {
+        return plateau[0][i] === symbole && plateau[1][i] === symbole && plateau[2][i] === symbole;
+    }
+
+    function verifierDiagonaleGaucheDroite() {
+        return plateau[0][0] === symbole && plateau[1][1] === symbole && plateau[2][2] === symbole;
+    }
+
+    function verifierDiagonalDroiteGauche() {
+        return plateau[0][2] === symbole && plateau[1][1] === symbole && plateau[2][0] === symbole;
+    }
 }
 
 
@@ -40,17 +52,19 @@ function jouerMorpion() {
         [" ", " ", " "],
     ];
 
-    let tour = 0;
+    let tourCourant = 0;
     let symbole = "X";
+    let nombreDeTourAJouer = 6;
 
-    while (tour < 6) {
+
+    while (tourCourant < nombreDeTourAJouer) {
         afficherPlateau(plateau);
 
         // Demande au joueur actuel de saisir les coordonnées
         let ligne, colonne;
         do {
-            ligne = parseInt(prompt(`Tour ${tour + 1}: Joueur "${symbole}", Entrez le numéro de ligne (1, 2 ou 3):`)) - 1;
-            colonne = parseInt(prompt(`Tour ${tour + 1}: Joueur "${symbole}", Entrez le numéro de colonne (1, 2 ou 3):`)) - 1;
+            ligne = parseInt(prompt(`Tour ${tourCourant + 1}: Joueur "${symbole}", Entrez le numéro de ligne (1, 2 ou 3):`)) - 1;
+            colonne = parseInt(prompt(`Tour ${tourCourant + 1}: Joueur "${symbole}", Entrez le numéro de colonne (1, 2 ou 3):`)) - 1;
         } while (isNaN(ligne) || isNaN(colonne) || ligne < 0 || ligne >= 3 || colonne < 0 || colonne >= 3 || plateau[ligne][colonne] !== " ");
 
         plateau[ligne][colonne] = symbole;
@@ -61,8 +75,8 @@ function jouerMorpion() {
             return;
         }
 
-        tour++;
-        symbole = tour % 2 === 0 ? "O" : "X";
+        tourCourant++;
+        symbole = tourCourant % 2 === 0 ? "O" : "X";
     }
 
     afficherPlateau(plateau);
