@@ -1,5 +1,4 @@
-
-const prompt=require("prompt-sync")({sigint:true});
+//const prompt=require("prompt-sync")({sigint:true});
 
 function afficherPlateau(jeu) {
     console.log("Plateau de jeu :");
